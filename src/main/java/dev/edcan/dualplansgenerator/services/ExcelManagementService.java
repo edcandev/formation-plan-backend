@@ -3,6 +3,7 @@ package dev.edcan.dualplansgenerator.services;
 import dev.edcan.dualplansgenerator.models.StudentExcelResponse;
 import dev.edcan.dualplansgenerator.models.Subject;
 import dev.edcan.dualplansgenerator.utils.FileUploadUtil;
+import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -31,6 +32,7 @@ public class ExcelManagementService {
     }
 
     public StudentExcelResponse getStudentExcelInfo(String filename) {
+
         Path folderPath =  fileUploadUtil.getFolderPath(filename);
         Path filePath = Path.of(String.valueOf(folderPath), filename);
         Workbook workbook;
@@ -45,19 +47,8 @@ public class ExcelManagementService {
 
         // Obteniendo los datos de manera manual
 
+        //System.out.println(filePath);
 
-
-        System.out.println(filePath);
-
-
-        StudentExcelResponse response = new StudentExcelResponse();
-
-        response.setStudentId(getStringDataByRowandCell(sheet,10, 2)); // Matrícula
-        response.setFirstSurname(getStringDataByRowandCell(sheet,12, 2)); // Apellido Paterno
-        response.setLastSurname(getStringDataByRowandCell(sheet,14,2));
-        response.setName(getStringDataByRowandCell(sheet,16,2));
-        response.setIeMentor(getStringDataByRowandCell(sheet,26,2));
-        // System.out.println(response.toString());
         ArrayList<Subject> subjects = new ArrayList<>();
         for(int i = 53; i < 67; i++) { // Iterador de materias
             Integer numericValue = getNumericDataByRowandCell(sheet,i,1);
@@ -70,14 +61,24 @@ public class ExcelManagementService {
                 subjects.add(currentSubject);
             }
         }
-        response.setSubjectList(subjects);
+        StudentExcelResponse response = new StudentExcelResponse()
+                .withStudentId(getStringDataByRowandCell(sheet,10, 2))
+                .withFirstSurname(getStringDataByRowandCell(sheet,12, 2))
+                .withLastSurname(getStringDataByRowandCell(sheet,14,2))
+                .withName(getStringDataByRowandCell(sheet,16,2))
+                .withfileName(filename)
+                .withIeMentor(getStringDataByRowandCell(sheet,26,2))
+                .withSubjectList(subjects)
+                .build();
+
+        System.out.println("=============>" + response.toString());
         return response;
     }
 
-    public String getStringDataByRowandCell(Sheet sheet, int r, int c) {
+    public String getStringDataByRowandCell(Sheet sheet, int r, int c) throws NullPointerException {
         return sheet.getRow(r).getCell(c).getRichStringCellValue().getString();
     }
-    public Integer getNumericDataByRowandCell(Sheet sheet, int r, int c) {
+    public Integer getNumericDataByRowandCell(Sheet sheet, int r, int c) throws NullArgumentException {
         return (Integer) (int) sheet.getRow(r).getCell(c).getNumericCellValue();
     }
 }

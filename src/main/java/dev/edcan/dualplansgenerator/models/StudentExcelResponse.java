@@ -9,54 +9,66 @@ public class StudentExcelResponse {
     private String lastSurname;
     private String name;
     private String ieMentor;
+    private String fileName;
     private List<Subject> subjectList;
+
+
+    public StudentExcelResponse () {
+
+    }
+
+    public StudentExcelResponse withStudentId(String studentId) {
+        this.studentId = studentId;
+        return this;
+    }
+    public StudentExcelResponse withFirstSurname(String firstSurname) {
+        this.firstSurname = firstSurname;
+        return this;
+    }
+    public StudentExcelResponse withLastSurname(String lastSurname) {
+        this.lastSurname = lastSurname;
+        return this;
+    }
+    public StudentExcelResponse withName(String name) {
+        this.name = name;
+        return this;
+    }
+    public StudentExcelResponse withfileName(String fileName) {
+        this.fileName = fileName;
+        return this;
+    }
+    public StudentExcelResponse withIeMentor(String ieMentor) {
+        this.ieMentor = ieMentor;
+        return this;
+    }
+    public StudentExcelResponse withSubjectList(List<Subject> subjectList) {
+        this.subjectList = subjectList;
+        return this;
+    }
+    public StudentExcelResponse build() {
+        return this;
+    }
 
     public String getStudentId() {
         return studentId;
     }
-
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
-
     public String getFirstSurname() {
         return firstSurname;
     }
-
-    public void setFirstSurname(String firstSurname) {
-        this.firstSurname = firstSurname;
-    }
-
     public String getLastSurname() {
         return lastSurname;
     }
-
-    public void setLastSurname(String lastSurname) {
-        this.lastSurname = lastSurname;
-    }
-
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
+    public String getFileName() {
+        return fileName;
     }
-
     public String getIeMentor() {
         return ieMentor;
     }
-
-    public void setIeMentor(String ieMentor) {
-        this.ieMentor = ieMentor;
-    }
-
     public List<Subject> getSubjectList() {
         return subjectList;
-    }
-
-    public void setSubjectList(List<Subject> subjectList) {
-        this.subjectList = subjectList;
     }
 
     @Override
@@ -67,6 +79,7 @@ public class StudentExcelResponse {
                 ", lastSurname='" + lastSurname + '\'' +
                 ", name='" + name + '\'' +
                 ", ieMentor='" + ieMentor + '\'' +
+                ", fileName='" + fileName + '\'' +
                 ", subjectList=" + subjectList +
                 '}';
     }
