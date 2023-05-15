@@ -40,17 +40,16 @@ public class AppController {
     }
 
     @PostMapping(value = "/generatePlan", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PlanGeneratorRequest> generatePlan(@RequestBody(required = true) PlanGeneratorRequest body) {
+    public ResponseEntity<PlanGeneratorRequest> generatePlan(@RequestBody(required = true) PlanGeneratorRequest requestBody) {
         System.out.println("petición de tipo get para generar");
 
-        String studentFileName = body.getStudentFileName();
-        String studentId = body.getStudentId();
+        executorService.generatePlan(requestBody);
 
-        System.out.println(body.toString());
-
+        // Implementar un metodo que verifi ue la existencia
 
 
 
-        return new ResponseEntity<>(body, HttpStatus.OK);
+
+        return new ResponseEntity<>(requestBody, HttpStatus.OK);
     }
 }
