@@ -1,13 +1,14 @@
 package dev.edcan.dualplansgenerator.models;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class PlanGeneratorRequest {
     private String studentId;
     private String studentFileName;
-    private Date generationDate;
+    private String generationDateString;
     private String period;
-
 
     public PlanGeneratorRequest() {
     }
@@ -24,12 +25,16 @@ public class PlanGeneratorRequest {
         return studentFileName;
     }
 
-    public Date getGenerationDate() {
-        return generationDate;
+    public void setStudentFileName(String studentFileName) {
+        this.studentFileName = studentFileName;
     }
 
-    public void setGenerationDate(Date generationDate) {
-        this.generationDate = generationDate;
+    public String getGenerationDateString() {
+        return generationDateString;
+    }
+
+    public void setGenerationDateString(String generationDateString) {
+        this.generationDateString = generationDateString;
     }
 
     public String getPeriod() {
@@ -40,7 +45,13 @@ public class PlanGeneratorRequest {
         this.period = period;
     }
 
-    public void setStudentFileName(String studentFileName) {
-        this.studentFileName = studentFileName;
+    @Override
+    public String toString() {
+        return "PlanGeneratorRequest{" +
+                "studentId='" + studentId + '\'' +
+                ", studentFileName='" + studentFileName + '\'' +
+                ", generationDateString='" + generationDateString + '\'' +
+                ", period='" + period + '\'' +
+                '}';
     }
 }

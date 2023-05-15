@@ -1,6 +1,5 @@
-package dev.edcan.dualplansgenerator.utils;
+package dev.edcan.dualplansgenerator.services;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,16 +11,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @Component
-public class FileUploadUtil {
-
+public class FileUploadServiceImpl  implements IFileUploadService {
 
     public Path getFolderPath(String fileName) {
         String folderName = fileName.substring(0,9);
         return Paths.get("Dual","data", folderName);
     }
 
-    public String saveFile(String fileName, MultipartFile multipartFile)
-            throws IOException {
+    public String saveFile(String fileName, MultipartFile multipartFile) throws IOException {
 
         Path uploadPath = getFolderPath(fileName);
 
