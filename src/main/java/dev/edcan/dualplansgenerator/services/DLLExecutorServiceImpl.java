@@ -20,7 +20,7 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
 
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("dotnet", "Tese.EducacionDual.Gestor.Etapas.dll", "E:Anexo5_1", "PE:TES5061300046", "MED:201920732", "FE:07/03/2022","PER:2023-1");
+            ProcessBuilder processBuilder = new ProcessBuilder("dotnet", "Tese.EducacionDual.Gestor.Etapas.dll", "E:Anexo5_1", "PE:TES5061300046", "MED:201920732", "FE:07/03/2023","PER:2023-1");
             //ProcessBuilder processBuilder = new ProcessBuilder("dotnet");
             Path dllDirectory = Paths.get(System.getProperty("user.dir")).resolve("Dual");
             processBuilder.directory(new File(dllDirectory.toUri()));

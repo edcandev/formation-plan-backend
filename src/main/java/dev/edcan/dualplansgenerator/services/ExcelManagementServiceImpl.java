@@ -1,7 +1,9 @@
 package dev.edcan.dualplansgenerator.services;
 
+import dev.edcan.dualplansgenerator.models.Materias;
 import dev.edcan.dualplansgenerator.models.StudentExcelResponse;
 import dev.edcan.dualplansgenerator.models.Subject;
+import dev.edcan.dualplansgenerator.repositories.IMateriasRepository;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -13,17 +15,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ExcelManagementServiceImpl implements IExcelManagementService {
 
     @Autowired
     IFileUploadService fileUploadService;
-
-    public ExcelManagementServiceImpl() {
-        System.out.println("SERVICIO DE EXCELES");
-    }
+    @Autowired
+    IMateriasRepository materiasRepository;
 
     public StudentExcelResponse getStudentExcelInfo(String filename) {
 
@@ -38,23 +40,23 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
         }
         Sheet sheet = workbook.getSheetAt(0);
 
-
-        // Obteniendo los datos de manera manual
-
-        //System.out.println(filePath);
-
         ArrayList<Subject> subjects = new ArrayList<>();
         for(int i = 53; i < 67; i++) { // Iterador de materias
-            Integer numericValue = getNumericDataByRowandCell(sheet,i,1);
-            if(numericValue > 0) {
+            String subjectId = String.valueOf(getNumericDataByRowandCell(sheet,i,1));
+
+
+            System.out.println(isAValidSubject(subjectId));
+
+            if(isAValidSubject(subjectId)) {
                 Subject currentSubject = new Subject(
-                        String.valueOf(numericValue),
+                        subjectId,
                         getStringDataByRowandCell(sheet, i, 2),
                         getStringDataByRowandCell(sheet, i, 3));
-                System.out.println(currentSubject.toString());
                 subjects.add(currentSubject);
             }
         }
+
+        System.out.println(subjects);
         StudentExcelResponse response = new StudentExcelResponse()
                 .withStudentId(getStringDataByRowandCell(sheet,10, 2))
                 .withFirstSurname(getStringDataByRowandCell(sheet,12, 2))
@@ -65,14 +67,33 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
                 .withSubjectList(subjects)
                 .build();
 
-        System.out.println("=============>" + response.toString());
+        //System.out.println("=============>" + response.toString());
         return response;
     }
 
-    public String getStringDataByRowandCell(Sheet sheet, int r, int c) throws NullPointerException {
+    @Override
+    public boolean existsByFilename(String filename) {
+        Path filePath = Path.of(String.valueOf(fileUploadService.getFolderPath(filename)), filename);
+        return filePath.toFile().exists();
+    }
+
+    public boolean isValidByFilename(String filename) {
+        return false;
+    }
+
+    @Override
+    public boolean isAValidSubject(String subjectId) {
+        for(Materias materia : materiasRepository.getAllMaterias()) {
+            if(subjectId.equals(materia.getClave())) return true;
+        }
+        return false;
+    }
+
+
+    private String getStringDataByRowandCell(Sheet sheet, int r, int c) throws NullPointerException {
         return sheet.getRow(r).getCell(c).getRichStringCellValue().getString();
     }
-    public Integer getNumericDataByRowandCell(Sheet sheet, int r, int c) throws NullArgumentException {
+    private Integer getNumericDataByRowandCell(Sheet sheet, int r, int c) throws NullArgumentException {
         return (Integer) (int) sheet.getRow(r).getCell(c).getNumericCellValue();
     }
 }

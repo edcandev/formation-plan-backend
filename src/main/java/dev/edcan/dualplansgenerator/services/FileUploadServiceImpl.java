@@ -22,8 +22,6 @@ public class FileUploadServiceImpl  implements IFileUploadService {
 
         Path uploadPath = getFolderPath(fileName);
 
-        //System.out.println(uploadPath);
-
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
