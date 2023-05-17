@@ -1,21 +1,28 @@
 package dev.edcan.dualplansgenerator.services;
 
 import dev.edcan.dualplansgenerator.models.PlanGeneratorRequest;
+import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 
 @Component
 public class DLLExecutorServiceImpl implements IDLLExecutorService {
 
+    @Autowired
+    IFileUploadUtil fileUploadUtil;
+
 
 
     @Override
-    public void generatePlan(PlanGeneratorRequest planGeneratorRequest) {
+    public boolean generatePlan(PlanGeneratorRequest planGeneratorRequest) {
 
         try {
 
@@ -28,24 +35,35 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
             Path dllDirectory = Paths.get(System.getProperty("user.dir")).resolve("Dual");
             processBuilder.directory(new File(dllDirectory.toUri()));
 
-            Process process = processBuilder.start();
-            process.getOutputStream().close();
+            Process processResult = processBuilder.start();
+            //processResult.getOutputStream();
 
-            InputStream processStdOutput = process.getInputStream();
+            InputStream processStdOutput = processResult.getInputStream();
             Reader r = new InputStreamReader(processStdOutput);
             BufferedReader br = new BufferedReader(r);
-            String line;
-            while ((line = br.readLine()) != null) {
 
-                if(! line.contains("error") || ! line.contains("ERROR")) {
-                    System.out.println(line);
-                } else {
-                    System.out.println("Error...!");
-                    return;
-                }
+            while (br.readLine() != null) { System.out.println(br.readLine()); }
+
+            File reportDirectory = new File(fileUploadUtil.getReportFolderPath(planGeneratorRequest.getStudentFileName()).toUri());
+
+            if(reportDirectory.exists()) {
+                System.out.println("REPORTES CREADOS PARA:".concat(planGeneratorRequest.getStudentId()));
+
+                Files.walk(fileUploadUtil.getDataFolderPath(planGeneratorRequest.getStudentFileName()))
+                        .sorted(Comparator.reverseOrder())
+                        .forEach( path -> {
+                            try {
+                                Files.delete(path);
+                            } catch(IOException ignored){}
+                        });
+
+                return true;
+            } else {
+                System.out.println("==================== ERROR DE GENERACIÓN PARA:".concat(planGeneratorRequest.getStudentId()).concat(" ===================="));
+                return false;
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            return false;
         }
     }
 

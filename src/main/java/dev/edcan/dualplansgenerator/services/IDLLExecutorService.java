@@ -4,5 +4,5 @@ import dev.edcan.dualplansgenerator.models.PlanGeneratorRequest;
 
 public interface IDLLExecutorService {
 
-    void generatePlan(PlanGeneratorRequest planGeneratorRequest);
+    boolean generatePlan(PlanGeneratorRequest planGeneratorRequest);
 }

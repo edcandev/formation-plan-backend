@@ -4,6 +4,7 @@ import dev.edcan.dualplansgenerator.models.Materias;
 import dev.edcan.dualplansgenerator.models.StudentExcelResponse;
 import dev.edcan.dualplansgenerator.models.Subject;
 import dev.edcan.dualplansgenerator.repositories.IMateriasRepository;
+import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -25,11 +26,13 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
     @Autowired
     IFileUploadService fileUploadService;
     @Autowired
+    IFileUploadUtil fileUploadUtil;
+    @Autowired
     IMateriasRepository materiasRepository;
 
     public StudentExcelResponse getStudentExcelInfo(String filename) {
 
-        Path folderPath =  fileUploadService.getFolderPath(filename);
+        Path folderPath =  fileUploadUtil.getDataFolderPath(filename);
         Path filePath = Path.of(String.valueOf(folderPath), filename);
         Workbook workbook;
         try {
@@ -51,7 +54,9 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
                 Subject currentSubject = new Subject()
                         .withSubjectId(strSubjectId)
                         .withPeriod(getStringDataByRowandCell(sheet, i, 2))
-                        .withPartial(getStringDataByRowandCell(sheet, i, 3)).withValid(isAValidSubject(strSubjectId)).build();
+                        .withPartial(getStringDataByRowandCell(sheet, i, 3))
+                        .withValid(isAValidSubject(strSubjectId))
+                        .build();
                 subjects.add(currentSubject);
             }
         }
@@ -71,7 +76,7 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
     @Override
     public boolean existsByFilename(String filename) {
-        Path filePath = Path.of(String.valueOf(fileUploadService.getFolderPath(filename)), filename);
+        Path filePath = Path.of(String.valueOf(fileUploadUtil.getDataFolderPath(filename)), filename);
         return filePath.toFile().exists();
     }
 
