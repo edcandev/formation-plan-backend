@@ -9,5 +9,5 @@ import java.nio.file.Path;
 public interface IFileUploadService {
     Path getFolderPath(String filename);
 
-    String saveFile(String fileName, MultipartFile multipartFile) throws IOException;
+    void saveFile(String fileName, MultipartFile multipartFile) throws IOException;
 }

@@ -53,9 +53,8 @@ public class AppController {
 
     @PostMapping(value = "/generatePlan", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlanGeneratorRequest> generatePlan(@RequestBody(required = true) PlanGeneratorRequest requestBody) {
-        System.out.println("petición de tipo get para generar");
 
-        // executorService.generatePlan(requestBody);
+        executorService.generatePlan(requestBody);
 
 
         System.out.println();

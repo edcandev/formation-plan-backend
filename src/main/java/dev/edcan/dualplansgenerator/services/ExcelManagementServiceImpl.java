@@ -42,16 +42,16 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
         ArrayList<Subject> subjects = new ArrayList<>();
         for(int i = 53; i < 67; i++) { // Iterador de materias
-            String subjectId = String.valueOf(getNumericDataByRowandCell(sheet,i,1));
+            Integer intSubjectId = getNumericDataByRowandCell(sheet,i,1);
 
+            if(intSubjectId > 0) {
 
-            System.out.println(isAValidSubject(subjectId));
+                String strSubjectId = String.valueOf(intSubjectId);
 
-            if(isAValidSubject(subjectId)) {
-                Subject currentSubject = new Subject(
-                        subjectId,
-                        getStringDataByRowandCell(sheet, i, 2),
-                        getStringDataByRowandCell(sheet, i, 3));
+                Subject currentSubject = new Subject()
+                        .withSubjectId(strSubjectId)
+                        .withPeriod(getStringDataByRowandCell(sheet, i, 2))
+                        .withPartial(getStringDataByRowandCell(sheet, i, 3)).withValid(isAValidSubject(strSubjectId)).build();
                 subjects.add(currentSubject);
             }
         }
@@ -66,8 +66,6 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
                 .withIeMentor(getStringDataByRowandCell(sheet,26,2))
                 .withSubjectList(subjects)
                 .build();
-
-        //System.out.println("=============>" + response.toString());
         return response;
     }
 
@@ -77,9 +75,6 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
         return filePath.toFile().exists();
     }
 
-    public boolean isValidByFilename(String filename) {
-        return false;
-    }
 
     @Override
     public boolean isAValidSubject(String subjectId) {

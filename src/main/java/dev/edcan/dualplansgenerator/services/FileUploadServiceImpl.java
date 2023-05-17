@@ -18,7 +18,7 @@ public class FileUploadServiceImpl  implements IFileUploadService {
         return Paths.get("Dual","data", folderName);
     }
 
-    public String saveFile(String fileName, MultipartFile multipartFile) throws IOException {
+    public void saveFile(String fileName, MultipartFile multipartFile) throws IOException {
 
         Path uploadPath = getFolderPath(fileName);
 
@@ -35,7 +35,6 @@ public class FileUploadServiceImpl  implements IFileUploadService {
         } catch (IOException e) {
             throw new IOException("NO SE PUDO GUARDAR: " + fileName, e);
         }
-        return fileCode;
     }
 
 }
