@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -18,31 +19,40 @@ public class FileUploadServiceImpl  implements IFileUploadService {
     @Autowired
     IFileUploadUtil fileUploadUtil;
 
-    public void saveFile(String fileName, MultipartFile multipartFile) throws IOException {
+    public void saveFile(MultipartFile multipartFile) {
 
-        // Dual/data/{matricula}
-        Path uploadPath = fileUploadUtil.getDataFolderPath(fileName);
+        String fileName = multipartFile.getOriginalFilename();
+        assert fileName != null;
 
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        Path projectPath = fileUploadUtil.getGeneratorProjectPath();
+
+        Path userFileFolderPath = projectPath.resolve("data").resolve(fileName.substring(0,9));
+
+
+        try {
+
+            if (! Files.exists(userFileFolderPath)) { Files.createDirectories(userFileFolderPath); }
+
+            byte[] fileBytes = multipartFile.getBytes();
+            Path userFilePath = userFileFolderPath.resolve(fileName);
+
+            if(! Files.exists(userFilePath)) {
+                System.out.println("==================== SE HA CARGADO EL ARCHIVO: ".concat(userFilePath.toString()).concat(" ===================="));
+                Files.write(userFilePath,fileBytes);
+            }
+
+        } catch (IOException e) {
+            System.out.println("==================== ERROR AL SUBIR ARCHIVO DE:".concat(fileName).concat(" ===================="));
         }
-        //String fileCode = RandomStringUtils.randomAlphanumeric(8);
-        String fileCode = multipartFile.getOriginalFilename();
 
-
-        Path directory = Paths.get("Dual/data");
-        //String folderPathString = directory.toFile().getAbsolutePath();
-        String home = System.getProperty("user.home");
-        String folderPathString = home + "/Desktop/Dual/data";
-        Path pathExterno = Paths.get(folderPathString).toAbsolutePath();
-        byte[] bytes = multipartFile.getBytes();
+        //Path pathExterno = fileUploadUtil.getGeneratorProjectPath();
+        //byte[] bytes = multipartFile.getBytes();
         //Path filePath = Paths.get(folderPathString.concat("/").concat(fileName));
-        Path filePath = pathExterno.resolve(fileName.substring(0,9)).resolve(fileName);
+        //Path filePath = pathExterno.resolve(fileName.substring(0,9)).resolve(fileName);
 
-        Path hardcoded = Paths.get(home,"Desktop","Dual","data", multipartFile.getOriginalFilename());
+        //Path hardcoded = Paths.get(home,"Desktop","Dual","data", multipartFile.getOriginalFilename());
         // Path hardcoded = Paths.get("opt","Dual","data", multipartFile.getOriginalFilename());
-        Files.write(hardcoded, bytes);
-
+        //Files.write(hardcoded, bytes);
 
         /*
         try (InputStream inputStream = multipartFile.getInputStream()) {

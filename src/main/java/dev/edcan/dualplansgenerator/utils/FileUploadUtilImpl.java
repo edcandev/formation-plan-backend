@@ -9,17 +9,19 @@ import java.nio.file.Paths;
 public class FileUploadUtilImpl implements IFileUploadUtil {
 
     @Override
-    public Path getDataFolderPath(String fileName) {
-        return Paths.get("Dual","data", fileName.substring(0,9));
+    public Path getGeneratorProjectPath() { // HOME/Dual
+        String projectDirectoryPath = System.getProperty("user.home") + "/Dual";
+        return Paths.get(projectDirectoryPath).toAbsolutePath();
     }
 
     @Override
-    public Path getDataFilePath(String fileName) {
-        return Paths.get(String.valueOf(getDataFolderPath(fileName).toUri()),fileName);
+    public Path getDataFolderPath(String fileName) {
+        return getGeneratorProjectPath().resolve("data").resolve(fileName.substring(0, 9));
+        //return Paths.get("Dual","data", fileName.substring(0,9));
     }
 
     @Override
     public Path getReportFolderPath(String fileName) {
-        return Paths.get("Dual","Reports", fileName.substring(0,9));
+        return getGeneratorProjectPath().resolve("Reports").resolve(fileName.substring(0, 9));
     }
 }

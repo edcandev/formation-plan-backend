@@ -61,7 +61,7 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
             }
         }
 
-        System.out.println(subjects);
+        // System.out.println(subjects);
         StudentExcelResponse response = new StudentExcelResponse()
                 .withStudentId(getStringDataByRowandCell(sheet,10, 2))
                 .withFirstSurname(getStringDataByRowandCell(sheet,12, 2))
@@ -79,7 +79,6 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
         Path filePath = Path.of(String.valueOf(fileUploadUtil.getDataFolderPath(filename)), filename);
         return filePath.toFile().exists();
     }
-
 
     @Override
     public boolean isAValidSubject(String subjectId) {

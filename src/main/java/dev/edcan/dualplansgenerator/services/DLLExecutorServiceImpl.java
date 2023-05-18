@@ -5,6 +5,7 @@ import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Component
 public class DLLExecutorServiceImpl implements IDLLExecutorService {
@@ -30,9 +33,15 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
             String period = planGeneratorRequest.getPeriod();
             String generationDateString = planGeneratorRequest.getGenerationDateString();
 
+            File reportDirectory = new File(fileUploadUtil.getReportFolderPath(planGeneratorRequest.getStudentFileName()).toUri());
+
+
+            System.out.println(reportDirectory);
+            if(reportDirectory.exists()) return true;
+
             ProcessBuilder processBuilder = new ProcessBuilder("dotnet", "Tese.EducacionDual.Gestor.Etapas.dll", "E:Anexo5_1", "PE:TES5061300046", "MED:" + studentId, "FE:" + generationDateString,"PER:" + period);
 
-            Path dllDirectory = Paths.get(System.getProperty("user.dir")).resolve("Dual");
+            Path dllDirectory = fileUploadUtil.getGeneratorProjectPath();
             processBuilder.directory(new File(dllDirectory.toUri()));
 
             Process processResult = processBuilder.start();
@@ -44,7 +53,6 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
 
             while (br.readLine() != null) { System.out.println(br.readLine()); }
 
-            File reportDirectory = new File(fileUploadUtil.getReportFolderPath(planGeneratorRequest.getStudentFileName()).toUri());
 
             if(reportDirectory.exists()) {
                 System.out.println("REPORTES CREADOS PARA:".concat(planGeneratorRequest.getStudentId()));
@@ -56,7 +64,6 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
                                 Files.delete(path);
                             } catch(IOException ignored){}
                         });
-
                 return true;
             } else {
                 System.out.println("==================== ERROR DE GENERACIÓN PARA:".concat(planGeneratorRequest.getStudentId()).concat(" ===================="));
@@ -64,6 +71,51 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
             }
         } catch(Exception e) {
             return false;
+        }
+    }
+
+    @Override
+    public void zipPlan(String studentId) {
+
+        Path reportsFolder = fileUploadUtil.getReportFolderPath(studentId);
+        File reportsFile = reportsFolder.toFile();
+
+        Path zipPath = fileUploadUtil.getGeneratorProjectPath().resolve("Reports").resolve(studentId.concat(".zip"));
+        File zipFile = zipPath.toFile();
+        try {
+            if(! Files.exists(zipFile.toPath())) {
+                Files.createFile  (zipFile.toPath()) ;
+                ZipUtil.pack(reportsFile, zipFile);
+            }
+        } catch(IOException e){}
+    }
+
+    private static void zipSingleFile(File file, String zipFileName) {
+        try {
+            //create ZipOutputStream to write to the zip file
+            FileOutputStream fos = new FileOutputStream(zipFileName);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            //add a new Zip Entry to the ZipOutputStream
+            ZipEntry ze = new ZipEntry(file.getName());
+            zos.putNextEntry(ze);
+            //read the file and write to ZipOutputStream
+            FileInputStream fis = new FileInputStream(file);
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) > 0) {
+                zos.write(buffer, 0, len);
+            }
+
+            //Close the zip entry to write to zip file
+            zos.closeEntry();
+            //Close resources
+            zos.close();
+            fis.close();
+            fos.close();
+            System.out.println(file.getCanonicalPath()+" is zipped to "+zipFileName);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

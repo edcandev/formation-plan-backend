@@ -7,6 +7,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface IFileUploadService {
-    void saveFile(String fileName, MultipartFile multipartFile) throws IOException;
+    void saveFile(MultipartFile multipartFile);
     void deleteFileDirectory(String fileName);
 }
