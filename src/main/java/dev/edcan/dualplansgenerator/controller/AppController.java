@@ -89,7 +89,8 @@ public class AppController {
 
         } catch(FileNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            System.out.println("No existe el recurso...");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
