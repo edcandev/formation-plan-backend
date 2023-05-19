@@ -3,6 +3,7 @@ package dev.edcan.dualplansgenerator.models;
 public class Subject {
 
     private String subjectId;
+    private String subjectName;
     private String period;
     private String partial;
     private boolean isValid;
@@ -11,6 +12,10 @@ public class Subject {
     }
     public Subject withSubjectId(String subjectId) {
         this.subjectId = subjectId;
+        return this;
+    }
+    public Subject withSubjectName(String subjectName){
+        this.subjectName = subjectName;
         return this;
     }
     public Subject withPeriod(String period) {
@@ -29,6 +34,9 @@ public class Subject {
 
     public String getSubjectId() {
         return subjectId;
+    }
+    public String getSubjectName() {
+        return subjectName;
     }
     public String getPeriod() {
         return period;

@@ -13,29 +13,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component
-public class FileDownloadServiceImpl {
+public class FileDownloadServiceImpl implements IFileDownloadService {
 
     Path foundFile;
     @Autowired
     IFileUploadUtil fileUploadUtil;
 
-    public Resource getFileAsResource(String fileCode) throws IOException {
-        Path dirPath = Paths.get("Files-Upload");
-
-        Files.list(dirPath).forEach(file -> {
-            if (file.getFileName().toString().startsWith(fileCode)) {
-                foundFile = file;
-                return;
-            }
-        });
-
-        if (foundFile != null) {
-            return new UrlResource(foundFile.toUri());
-        }
-        return null;
-    }
-
-    public File getFileByStudentId(String studentId) {
+    @Override
+    public File getReportsFileByStudentId(String studentId) {
 
         Path zipFilePath = fileUploadUtil.getGeneratorProjectPath().resolve("Reports").resolve(studentId.concat(".zip"));
         File zipFile = zipFilePath.toFile();

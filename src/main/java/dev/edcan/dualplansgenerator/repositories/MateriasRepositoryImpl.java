@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class MateriasRepositoryImpl implements IMateriasRepository {
@@ -41,5 +42,14 @@ public class MateriasRepositoryImpl implements IMateriasRepository {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public Materias getMateriaById(String subjectId) {
+
+        for(Materias mat : getAllMaterias()) {
+           if (Objects.equals(mat.getClave(), subjectId)) return mat;
+        }
+        return null;
     }
 }

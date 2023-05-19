@@ -53,6 +53,7 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
                 Subject currentSubject = new Subject()
                         .withSubjectId(strSubjectId)
+                        .withSubjectName(materiasRepository.getMateriaById(strSubjectId).getNombre())
                         .withPeriod(getStringDataByRowandCell(sheet, i, 2))
                         .withPartial(getStringDataByRowandCell(sheet, i, 3))
                         .withValid(isAValidSubject(strSubjectId))

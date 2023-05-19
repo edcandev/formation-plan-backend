@@ -5,5 +5,6 @@ import dev.edcan.dualplansgenerator.models.Materias;
 import java.util.List;
 
 public interface IMateriasRepository {
-    public List<Materias> getAllMaterias();
+    List<Materias> getAllMaterias();
+    Materias getMateriaById(String subjectId);
 }
