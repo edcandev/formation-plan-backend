@@ -5,6 +5,7 @@ import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.*;
@@ -16,7 +17,7 @@ import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-@Component
+@Service
 public class DLLExecutorServiceImpl implements IDLLExecutorService {
 
     @Autowired

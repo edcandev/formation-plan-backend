@@ -1,5 +1,6 @@
 package dev.edcan.dualplansgenerator.controllers;
 
+import dev.edcan.dualplansgenerator.models.IEMentor;
 import dev.edcan.dualplansgenerator.models.PlanGeneratorRequest;
 import dev.edcan.dualplansgenerator.models.PlanGeneratorResponse;
 import dev.edcan.dualplansgenerator.models.StudentExcelResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -80,5 +82,10 @@ public class AppController {
             System.out.println("No existe el recurso...");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "/getMentors")
+    public ResponseEntity<List<IEMentor>> getMentors() {
+        return new ResponseEntity<>(excelManagementService.getIEMentors(),HttpStatus.OK);
     }
 }

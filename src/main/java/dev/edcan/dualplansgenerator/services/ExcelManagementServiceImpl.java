@@ -1,34 +1,46 @@
 package dev.edcan.dualplansgenerator.services;
 
+import dev.edcan.dualplansgenerator.models.IEMentor;
 import dev.edcan.dualplansgenerator.models.Materias;
 import dev.edcan.dualplansgenerator.models.StudentExcelResponse;
 import dev.edcan.dualplansgenerator.models.Subject;
 import dev.edcan.dualplansgenerator.repositories.IMateriasRepository;
 import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
 import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-@Component
+@Service
 public class ExcelManagementServiceImpl implements IExcelManagementService {
 
     @Autowired
     IFileUploadService fileUploadService;
-    @Autowired
     IFileUploadUtil fileUploadUtil;
     @Autowired
     IMateriasRepository materiasRepository;
+    List<IEMentor> mentorList;
+
+    @Autowired
+    public ExcelManagementServiceImpl(IFileUploadUtil fileUploadUtil) {
+        // Busca los datos de los mentores al iniciar
+        System.out.println("TEST 02 PASSED");
+        mentorList = populateMentorList(fileUploadUtil);
+        //mentorList.forEach(m -> System.out.println(m.toString()));
+    }
 
     public StudentExcelResponse getStudentExcelInfo(String filename) {
 
@@ -73,6 +85,61 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
                 .withSubjectList(subjects)
                 .build();
         return response;
+    }
+
+    @Override
+    public List<IEMentor> getIEMentors() {
+        return mentorList;
+    }
+
+    private List<IEMentor> populateMentorList(IFileUploadUtil fileUploadUtil) {
+
+        Path alumnosMentoresFilePath = fileUploadUtil.getGeneratorProjectPath().resolve("data").resolve("AlumnosMentores.xlsx");
+
+        Workbook workbook;
+
+        try {
+            FileInputStream alumnosMentoresFile = new FileInputStream(alumnosMentoresFilePath.toFile());
+            workbook = new XSSFWorkbook(alumnosMentoresFile);
+        } catch(IOException ioException){ return null; }
+
+        List<IEMentor> mentorList = new ArrayList<>();
+
+        Sheet sheet = workbook.getSheetAt(0);
+
+        for(Row row : sheet) {
+            if(row.getCell(0) != null && row.getRowNum() != 1) {
+
+                IEMentor mentor = new IEMentor();
+                String fullName = row.getCell(6).getStringCellValue();
+                Double studentId = row.getCell(2).getNumericCellValue();
+                Long longStudentId = studentId.longValue();
+
+                if(mentorList.stream().filter(iem -> Objects.equals(iem.getFullName(), fullName)).toList().size() == 0 ) {
+                    mentor.setFullName(fullName);
+                    mentor.addStudentId(longStudentId.toString());
+                    mentorList.add(mentor);
+
+                } else {
+                    mentorList.stream()
+                            .filter(iem -> Objects.equals(iem.getFullName(), fullName))
+                            .findFirst().get().addStudentId(longStudentId.toString());
+                }
+            }
+
+        }
+
+        Set<String> studentIdsSet = new HashSet<>();
+
+        for(IEMentor mentor : mentorList) {
+            studentIdsSet = new HashSet<>(mentor.getStudentsIds());
+
+            System.out.println(studentIdsSet);
+
+            mentor.setStudentsIds(studentIdsSet);
+        }
+
+        return mentorList;
     }
 
     @Override

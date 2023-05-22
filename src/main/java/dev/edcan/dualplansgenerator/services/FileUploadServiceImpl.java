@@ -3,6 +3,7 @@ package dev.edcan.dualplansgenerator.services;
 import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -13,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-@Component
+@Service
 public class FileUploadServiceImpl  implements IFileUploadService {
 
     @Autowired
