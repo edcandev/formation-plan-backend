@@ -29,17 +29,16 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
     @Autowired
     IFileUploadService fileUploadService;
+    @Autowired
     IFileUploadUtil fileUploadUtil;
     @Autowired
     IMateriasRepository materiasRepository;
-    List<IEMentor> mentorList;
+    static List<IEMentor> mentorList;
 
-    @Autowired
     public ExcelManagementServiceImpl(IFileUploadUtil fileUploadUtil) {
         // Busca los datos de los mentores al iniciar
-        System.out.println("TEST 02 PASSED");
+        System.out.println("OBTENIENDO MENTORES Y ALUMNOS...");
         mentorList = populateMentorList(fileUploadUtil);
-        //mentorList.forEach(m -> System.out.println(m.toString()));
     }
 
     public StudentExcelResponse getStudentExcelInfo(String filename) {
@@ -89,7 +88,7 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
     @Override
     public List<IEMentor> getIEMentors() {
-        return mentorList;
+        return populateMentorList(fileUploadUtil);
     }
 
     private List<IEMentor> populateMentorList(IFileUploadUtil fileUploadUtil) {
@@ -101,7 +100,9 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
         try {
             FileInputStream alumnosMentoresFile = new FileInputStream(alumnosMentoresFilePath.toFile());
             workbook = new XSSFWorkbook(alumnosMentoresFile);
-        } catch(IOException ioException){ return null; }
+        } catch(IOException ioException){
+            System.out.println("ARCHIVO DE ALUMNOS Y MENTORES NO ENCONTRADO");
+            return null; }
 
         List<IEMentor> mentorList = new ArrayList<>();
 
@@ -129,12 +130,12 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
         }
 
-        Set<String> studentIdsSet = new HashSet<>();
+        Set<String> studentIdsSet;
 
         for(IEMentor mentor : mentorList) {
             studentIdsSet = new HashSet<>(mentor.getStudentsIds());
 
-            System.out.println(studentIdsSet);
+            // System.out.println(studentIdsSet);
 
             mentor.setStudentsIds(studentIdsSet);
         }

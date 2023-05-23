@@ -9,6 +9,11 @@ import java.nio.file.Paths;
 public class FileUploadUtilImpl implements IFileUploadUtil {
 
     @Override
+    public String getStudentIdByFileName(String fileName) {
+        return fileName.substring(0,9);
+    }
+
+    @Override
     public Path getGeneratorProjectPath() { // HOME/Dual
         String projectDirectoryPath = System.getProperty("user.home") + "/Dual";
         return Paths.get(projectDirectoryPath).toAbsolutePath();

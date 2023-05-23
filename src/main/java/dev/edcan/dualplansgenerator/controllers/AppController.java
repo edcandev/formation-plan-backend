@@ -30,16 +30,24 @@ public class AppController {
     IExcelManagementService excelManagementService;
     @Autowired
     IFileDownloadService fileDownloadService;
+    @Autowired
+    IExcelValidatorService excelValidatorService;
 
     @PostMapping("/uploadFile")
     public ResponseEntity<StudentExcelResponse> uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("mentor") String mentor) throws IOException {
 
-        //String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+
+        String fileName = multipartFile.getOriginalFilename();
+        String studentId = fileUploadUtil.getStudentIdByFileName(fileName);
+
+        System.out.println(studentId);
+        System.out.println(mentor);
+
+        if(! excelValidatorService.canGeneratePlan(mentor, studentId)) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
         fileUploadService.saveFile(multipartFile);
 
-        if(! excelManagementService.existsByFilename(multipartFile.getOriginalFilename())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
+        if(! excelManagementService.existsByFilename(fileName)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         StudentExcelResponse response = excelManagementService.getStudentExcelInfo(multipartFile.getOriginalFilename());
         return new ResponseEntity<>(response, HttpStatus.OK);
