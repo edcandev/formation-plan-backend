@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.List;
 
 @RestController
@@ -40,9 +41,10 @@ public class AppController {
         String fileName = multipartFile.getOriginalFilename();
         String studentId = fileUploadUtil.getStudentIdByFileName(fileName);
 
-        System.out.println(studentId);
-        System.out.println(mentor);
+        System.out.println("NOMBRE DEL ARCHIVO: " + multipartFile.getOriginalFilename());
+        System.out.println("NOMBRE DEL MENTOR: " + mentor);
 
+        if(! excelValidatorService.isAValidFileName(multipartFile.getOriginalFilename())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if(! excelValidatorService.canGeneratePlan(mentor, studentId)) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
         fileUploadService.saveFile(multipartFile);
@@ -78,6 +80,8 @@ public class AppController {
         System.out.println(userZipFile);
 
         try {
+
+            System.out.println("REPORTE GENERADO PARA: " + userZipFile);
 
             InputStreamResource resource = new InputStreamResource(new FileInputStream(userZipFile));
             return ResponseEntity.ok()
