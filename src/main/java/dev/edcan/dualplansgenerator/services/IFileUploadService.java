@@ -8,5 +8,5 @@ import java.nio.file.Path;
 
 public interface IFileUploadService {
     void saveFile(MultipartFile multipartFile);
-    void deleteFileDirectory(String fileName);
+    void deleteFileDirectory(MultipartFile multipartFile);
 }

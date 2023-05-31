@@ -47,11 +47,20 @@ public class AppController {
         if(! excelValidatorService.isAValidFileName(multipartFile.getOriginalFilename())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if(! excelValidatorService.canGeneratePlan(mentor, studentId)) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
+        fileUploadService.deleteFileDirectory(multipartFile);
         fileUploadService.saveFile(multipartFile);
 
         if(! excelManagementService.existsByFilename(fileName)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         StudentExcelResponse response = excelManagementService.getStudentExcelInfo(multipartFile.getOriginalFilename());
+
+        if(response == null) {
+            fileUploadService.deleteFileDirectory(multipartFile);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        System.out.println("=== CÉDULA CORRECTA ===");
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

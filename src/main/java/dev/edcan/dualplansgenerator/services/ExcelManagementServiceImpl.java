@@ -55,26 +55,34 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
         Sheet sheet = workbook.getSheetAt(0);
 
         ArrayList<Subject> subjects = new ArrayList<>();
-        for(int i = 53; i < 67; i++) { // Iterador de materias
-            Integer intSubjectId = getNumericDataByRowandCell(sheet,i,1);
 
-            if(intSubjectId > 0) {
+        try {
 
-                String strSubjectId = String.valueOf(intSubjectId);
+            for(int i = 53; i < 67; i++) { // Iterador de materias
+                Integer intSubjectId = getNumericDataByRowandCell(sheet, i, 1);
 
-                Subject currentSubject = new Subject()
-                        .withSubjectId(strSubjectId)
-                        .withSubjectName(materiasRepository.getMateriaById(strSubjectId).getNombre())
-                        .withPeriod(getStringDataByRowandCell(sheet, i, 2))
-                        .withPartial(getStringDataByRowandCell(sheet, i, 3))
-                        .withValid(isAValidSubject(strSubjectId))
-                        .build();
-                subjects.add(currentSubject);
+                if (intSubjectId > 0) {
+
+                    String strSubjectId = String.valueOf(intSubjectId);
+
+                    Subject currentSubject = new Subject()
+                            .withSubjectId(strSubjectId)
+                            .withSubjectName(materiasRepository.getMateriaById(strSubjectId).getNombre())
+                            .withPeriod(getStringDataByRowandCell(sheet, i, 2))
+                            .withPartial(getStringDataByRowandCell(sheet, i, 3))
+                            .withValid(isAValidSubject(strSubjectId))
+                            .build();
+                    subjects.add(currentSubject);
+                }
             }
+
+        } catch (NullPointerException e) {
+            System.out.println("=== ERROR EN LA CÉDULA ===");
+            return null;
         }
 
         // System.out.println(subjects);
-        StudentExcelResponse response = new StudentExcelResponse()
+        return new StudentExcelResponse()
                 .withStudentId(getStringDataByRowandCell(sheet,10, 2))
                 .withFirstSurname(getStringDataByRowandCell(sheet,12, 2))
                 .withLastSurname(getStringDataByRowandCell(sheet,14,2))
@@ -83,7 +91,6 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
                 .withIeMentor(getStringDataByRowandCell(sheet,26,2))
                 .withSubjectList(subjects)
                 .build();
-        return response;
     }
 
     @Override
