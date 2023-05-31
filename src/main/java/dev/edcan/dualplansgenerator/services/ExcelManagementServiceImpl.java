@@ -76,7 +76,7 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
                 }
             }
 
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             System.out.println("=== ERROR EN LA CÉDULA ===");
             return null;
         }

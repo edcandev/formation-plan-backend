@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ResourceUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,11 +34,20 @@ public class MateriasRepositoryImpl implements IMateriasRepository {
         try {
             om = new ObjectMapper();
             //materiasFile = ResourceUtils.getFile("classpath:subjects.json");
-            materiasFilePath = fileUploadUtil.getGeneratorProjectPath().resolve("subjects.json");
+            materiasFilePath = fileUploadUtil.getGeneratorProjectPath().resolve("materias.json");
+
+            System.out.println(materiasFilePath);
+
 
             byte[] JSON = Files.readAllBytes(materiasFilePath);
+
             Materias[] materias = om.readValue(JSON, Materias[].class);
-            return Arrays.asList(materias);
+
+            List<Materias> materiasList = Arrays.asList(materias);
+
+            // materiasList.forEach( m -> System.out.println(m));
+
+            return materiasList;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -48,7 +58,9 @@ public class MateriasRepositoryImpl implements IMateriasRepository {
     public Materias getMateriaById(String subjectId) {
 
         for(Materias mat : getAllMaterias()) {
-           if (Objects.equals(mat.getClave(), subjectId)) return mat;
+            if (Objects.equals(mat.getClave(), subjectId)){
+               return mat;
+           }
         }
         return null;
     }

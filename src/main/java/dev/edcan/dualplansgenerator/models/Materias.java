@@ -10,21 +10,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-
-/*
-public class Materias {
-
-    private byte[] myJsonString;
-    private ObjectMapper om = new ObjectMapper();
-    public Root[] root;
-
-    public Materias() throws IOException {
-
-    }
-
-
-}*/
-
+// import com.fasterxml.jackson.databind.ObjectMapper; // version 2.11.1
+// import com.fasterxml.jackson.annotation.JsonProperty; // version 2.11.1
+/* ObjectMapper om = new ObjectMapper();
+Root root = om.readValue(myJsonString, Root.class); */
 class Actividade{
     @JsonProperty("id")
     public int getId() {
@@ -244,7 +233,20 @@ class PlanDeEstudio{
     ArrayList<CompetenciasPrevia> competenciasPrevias;
 }
 
-public class Materias {
+public class Materias{
+
+    @Override
+    public String toString() {
+        return "Materias{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", creditos=" + creditos +
+                ", clave='" + clave + '\'' +
+                ", semestre=" + semestre +
+                ", carrera=" + carrera.getNombre() +
+                ", planDeEstudio=" + planDeEstudio +
+                '}';
+    }
     @JsonProperty("id")
     public int getId() {
         return this.id; }
@@ -310,7 +312,7 @@ class Subtema{
     String clave;
 }
 
- class Tema{
+class Tema{
     @JsonProperty("id")
     public int getId() {
         return this.id; }
@@ -366,4 +368,5 @@ class Subtema{
         this.subtemas = subtemas; }
     ArrayList<Subtema> subtemas;
 }
+
 
