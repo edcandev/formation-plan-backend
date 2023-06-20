@@ -6,6 +6,7 @@ public interface IFileUploadUtil {
     String getStudentIdByFileName(String fileName);
     Path getGeneratorProjectPath();
     Path getDataFolderPath(String fileName);
-    Path getReportFolderPath(String fileName);
+    Path getStudentReportFolderPath(String fileName);
+    Path getReportFolderPath();
 
 }

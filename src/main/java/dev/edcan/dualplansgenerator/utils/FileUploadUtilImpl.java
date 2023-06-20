@@ -26,7 +26,13 @@ public class FileUploadUtilImpl implements IFileUploadUtil {
     }
 
     @Override
-    public Path getReportFolderPath(String fileName) {
+    public Path getStudentReportFolderPath(String fileName) {
         return getGeneratorProjectPath().resolve("Reports").resolve(fileName.substring(0, 9));
     }
+    @Override
+    public Path getReportFolderPath() {
+        return getGeneratorProjectPath().resolve("Reports");
+    }
+
+
 }
