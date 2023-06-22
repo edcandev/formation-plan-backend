@@ -13,17 +13,18 @@ l8="deb-src http://security.debian.org/debian-security/ buster/updates main cont
 #Funcion para hacer git clone necesarios (DUAL y JAR)
 git_clones(){
   echo "Ejecutando script que hace los git clone necesarios"
-  cd /root
-  git clone https://github.com/edcan-dev/Dual.git
-  echo "Clone de "Dual" realizado con exito"
+  #cd /root/Dual
+  #git pull origin main
+  #echo "Clon de "Dual" realizado con exito"
   cd /app
-  git clone https://github.com/edcan-dev/formation-plan-backend.git
-  echo "Clone de "formation-plan-backend" realizado con exito"
-  cd /app/formation-plan-backend
+  git clone https://github.com/fluffy1720/formation-plan-backend-prod.git
+  echo "Clon de "formation-plan-backend-prod" realizado con exito"
+  cd /app/formation-plan-backend-prod
   mvn clean package
   echo "Compilacion del proyecto realizada con exito"
   sleep 2
 }
+
 # Función para agregar líneas al archivo sources.list
 agregar_lineas() {
   echo "Ejecutando script para agregar líneas"
@@ -48,8 +49,8 @@ agregar_lineas() {
 verificar_certificado_valido() {
   echo "Ejecutando el script de verificación de certificados"
   sleep 2
-  local cert_file="/app/fpb-share/live/$domain/fullchain.pem"
-  local key_file="/app/fpb-share/live/$domain/privkey.pem"
+  local cert_file="/root/Dual/live/$domain/fullchain.pem"
+  local key_file="/root/Dual/live/$domain/privkey.pem"
   echo "Configurando directorios y Nginx"
   sleep 2
   mkdir -p "/etc/letsencrypt/live/$domain"
@@ -63,28 +64,26 @@ verificar_certificado_valido() {
     echo "Renovando certificados"
     sleep 2
     certbot renew
-    rm /app/fpb-share/live/$domain/fullchain.pem
-    rm /app/fpb-share/live/$domain/privkey.pem
-    cp "/etc/letsencrypt/live/$domain/fullchain.pem" "/app/fpb-share/live/$domain/"
-    cp "/etc/letsencrypt/live/$domain/privkey.pem" "/app/fpb-share/live/$domain/"
+    rm /root/Dual/live/$domain/fullchain.pem
+    rm /root/Dual/live/$domain/privkey.pem
+    cp "/etc/letsencrypt/live/$domain/fullchain.pem" "/root/Dual/live/$domain/"
+    cp "/etc/letsencrypt/live/$domain/privkey.pem" "/root/Dual/live/$domain/"
   fi
   echo "Configuración de certificados completada"
   sleep 2
 }
+
 #Watchdog que verifica la existencia de archivos .zip
 ejec_copy_reports(){
-  bash /app/fpb-share/Planes/copiar_planes.sh &
+  bash /scripts/copiar_planes.sh &
   echo "El watchdog que copia los .zip de alumnos está activo"
-  sleep 2
 }
 
 #Watchdog que verifica la existencia de residuos de planes de alumnos
 ejec_elim(){
-  bash /app/fpb-share/live/generadordeplanes.centralus.azurecontainer.io/eliminar.sh &
-  echo "El watchdog que eliminar los residuos de generacion de planes está activo"
-  sleep 2
+  bash /scripts/eliminar.sh &
+  echo "El watchdog que elimina los residuos de generacion de planes está activo"
 }
-
 
 # Función para ejecutar la aplicación Java
 ejecutar_jar() {
@@ -92,7 +91,7 @@ ejecutar_jar() {
   sleep 2
   nginx -g 'daemon off;' &
   #systemctl restart nginx
-  cd /app/formation-plan-backend/target
+  cd /app/formation-plan-backend-prod/target
   java -jar dual-plans-generator-0.0.1-SNAPSHOT.jar
 }
 

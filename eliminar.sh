@@ -3,7 +3,7 @@
 # Script para monitorear y eliminar archivos y carpetas en un directorio después de 30 segundos.
 
 # Directorio a monitorear
-directorio="/root/Dual/Reports"
+directorio="/root/Dual/Planes/Dual/Reports"
 
 # Función para eliminar archivo y carpeta después de 25 segundos
 eliminar_d30() {
