@@ -99,8 +99,8 @@ public class AppController {
 
             InputStreamResource resource = new InputStreamResource(new FileInputStream(userZipFile));
 
-            System.out.println("Se ha comenzado a eliminar el reporte de:" + studentId);
-            fIleRemoveService.deleteReportFolderByStudentId(studentId);
+            //System.out.println("Se ha comenzado a eliminar el reporte de:" + studentId);
+            //fIleRemoveService.deleteReportFolderByStudentId(studentId);
 
             return ResponseEntity.ok()
                     .contentLength(userZipFile.length())
