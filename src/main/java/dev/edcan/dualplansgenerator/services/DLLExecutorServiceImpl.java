@@ -2,17 +2,13 @@ package dev.edcan.dualplansgenerator.services;
 
 import dev.edcan.dualplansgenerator.models.PlanGeneratorRequest;
 import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,7 +30,7 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
             String period = planGeneratorRequest.getPeriod();
             String generationDateString = planGeneratorRequest.getGenerationDateString();
 
-            File reportDirectory = new File(fileUploadUtil.getReportFolderPath(planGeneratorRequest.getStudentFileName()).toUri());
+            File reportDirectory = new File(fileUploadUtil.getStudentReportFolderPath(planGeneratorRequest.getStudentFileName()).toUri());
 
 
             System.out.println(reportDirectory);
@@ -78,7 +74,7 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
     @Override
     public void zipPlan(String studentId) {
 
-        Path reportsFolder = fileUploadUtil.getReportFolderPath(studentId);
+        Path reportsFolder = fileUploadUtil.getStudentReportFolderPath(studentId);
         File reportsFile = reportsFolder.toFile();
 
         Path zipPath = fileUploadUtil.getGeneratorProjectPath().resolve("Reports").resolve(studentId.concat(".zip"));

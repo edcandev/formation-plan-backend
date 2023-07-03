@@ -6,6 +6,7 @@ import dev.edcan.dualplansgenerator.models.PlanGeneratorResponse;
 import dev.edcan.dualplansgenerator.models.StudentExcelResponse;
 import dev.edcan.dualplansgenerator.services.*;
 import dev.edcan.dualplansgenerator.utils.IFileUploadUtil;
+import org.apache.poi.ss.formula.functions.Finance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -33,6 +34,10 @@ public class AppController {
     IFileDownloadService fileDownloadService;
     @Autowired
     IExcelValidatorService excelValidatorService;
+    @Autowired
+    IFIleRemoveService removeService;
+    @Autowired
+    IFIleRemoveService fIleRemoveService;
 
     @PostMapping("/uploadFile")
     public ResponseEntity<StudentExcelResponse> uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("mentor") String mentor) throws IOException {
@@ -93,12 +98,16 @@ public class AppController {
             System.out.println("REPORTE GENERADO PARA: " + userZipFile);
 
             InputStreamResource resource = new InputStreamResource(new FileInputStream(userZipFile));
+
+            //System.out.println("Se ha comenzado a eliminar el reporte de:" + studentId);
+            //fIleRemoveService.deleteReportFolderByStudentId(studentId);
+
             return ResponseEntity.ok()
                     .contentLength(userZipFile.length())
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
 
-        } catch(FileNotFoundException e) {
+        } catch(Exception e) {
             e.printStackTrace();
             System.out.println("No existe el recurso...");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -108,5 +117,10 @@ public class AppController {
     @GetMapping(value = "/getMentors")
     public ResponseEntity<List<IEMentor>> getMentors() {
         return new ResponseEntity<>(excelManagementService.getIEMentors(),HttpStatus.OK);
+    }
+    @GetMapping(value = "/deleteReport")
+    public ResponseEntity<String> deleteReport() {
+
+        return new ResponseEntity<>("deleted",HttpStatus.OK);
     }
 }
