@@ -40,7 +40,7 @@ public class AppController {
     IFIleRemoveService fIleRemoveService;
 
     @PostMapping("/uploadFile")
-    public ResponseEntity<StudentExcelResponse> uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("mentor") String mentor) throws IOException {
+    public ResponseEntity<StudentExcelResponse> uploadFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam(value = "mentor", required = false) String mentor) throws IOException {
 
 
         String fileName = multipartFile.getOriginalFilename();
@@ -50,7 +50,8 @@ public class AppController {
         System.out.println("NOMBRE DEL MENTOR: " + mentor);
 
         if(! excelValidatorService.isAValidFileName(multipartFile.getOriginalFilename())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if(! excelValidatorService.canGeneratePlan(mentor, studentId)) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
+        if(mentor != null ) if(! excelValidatorService.canGeneratePlan(mentor, studentId)) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
         fileUploadService.deleteFileDirectory(multipartFile);
         fileUploadService.saveFile(multipartFile);
