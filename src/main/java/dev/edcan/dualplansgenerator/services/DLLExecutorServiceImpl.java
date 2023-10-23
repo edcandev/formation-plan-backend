@@ -33,8 +33,9 @@ public class DLLExecutorServiceImpl implements IDLLExecutorService {
             File reportDirectory = new File(fileUploadUtil.getStudentReportFolderPath(planGeneratorRequest.getStudentFileName()).toUri());
 
 
-            System.out.println(reportDirectory);
             if(reportDirectory.exists()) return true;
+
+            System.out.println(studentId + " - " + generationDateString + " - " + period);
 
             ProcessBuilder processBuilder = new ProcessBuilder("dotnet", "Tese.EducacionDual.Gestor.Etapas.dll", "E:Anexo5_1", "PE:TES5061300046", "MED:" + studentId, "FE:" + generationDateString,"PER:" + period);
 

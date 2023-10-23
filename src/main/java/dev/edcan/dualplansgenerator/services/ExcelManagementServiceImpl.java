@@ -83,7 +83,7 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
 
         // System.out.println(subjects);
         return new StudentExcelResponse()
-                .withStudentId(getStringDataByRowandCell(sheet,10, 2))
+                .withStudentId(getStudentIdString(sheet,10, 2))
                 .withFirstSurname(getStringDataByRowandCell(sheet,12, 2))
                 .withLastSurname(getStringDataByRowandCell(sheet,14,2))
                 .withName(getStringDataByRowandCell(sheet,16,2))
@@ -164,6 +164,13 @@ public class ExcelManagementServiceImpl implements IExcelManagementService {
         return false;
     }
 
+    private String getStudentIdString(Sheet sheet, int r, int c) throws NullPointerException {
+
+        String malformedString = String.valueOf(sheet.getRow(r).getCell(c).getNumericCellValue());
+        String fixedString = malformedString.replace(".","").substring(0,9);
+        System.out.println("============> " + fixedString);
+        return  fixedString;
+    }
 
     private String getStringDataByRowandCell(Sheet sheet, int r, int c) throws NullPointerException {
         return sheet.getRow(r).getCell(c).getRichStringCellValue().getString();
